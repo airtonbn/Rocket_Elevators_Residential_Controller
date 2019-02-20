@@ -204,5 +204,4 @@ function main(numFloor, numElevators) {
   elevatorController.findFloorRequestBtn(1, 2);
 }
 
-//next
 
