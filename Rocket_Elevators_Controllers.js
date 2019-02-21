@@ -1,41 +1,109 @@
 
+class Elevators {
+    constructor(numElevators, floorNumber) {
+        this.numElevators = numElevators;
+        this.currentFloor = 1;
+        this.direction = null;
+        this.status = "idle";
+        this.floorList = [];
+        this.internalBtnList = [];
+        for (let j = 1; j <= floorNumber; j++) {
+            this.internalBtnList.push(new RequestFloor(floorNumber, "off", j));
+        }
+    }
+
+    movingDown() {
+        if (this.status == "IDLE" || this.status == "STOPPED") {
+            this.status = "MOVING";
+            this.direction = "DOWN";
+            console.log("elevator start moving", Elevator);
+        }
+        this.timer(2000);
+        this.currentFloor--;
+    }
+
+    movingUp() {
+        if (this.status == "IDLE" || this.status == "STOPPED") {
+            this.status = "MOVING";
+            this.direction = "UP";
+            console.log("elevator start moving", Elevator);
+        }
+        this.timer(2000);
+        this.currentFloor++;
+    }
+}
+
+class Columns {
+    constructor(numElevators, floorNumber) {
+        this.numElevators = numElevators;
+        this.floorNumber = floorNumber;
+        this.elevators = [];
+        for (let i = 0; i < this.numElevators; i++) {
+            this.elevators.push(new Elevators(floorNumber));
+        }
+    }
+}
+
+class Button {
+    constructor(direction, requestFloor) {
+        this.direction = direction;
+        this.requestFloor = requestFloor;
+        this.status = status;
+    }
+}
+
+class ExternalFloorBtn {
+    constructor(direction, requestFloor, status) {
+        this.requestFloor = requestFloor;
+        this.direction = direction;
+        this.status = status;
+    }
+}
+
+class RequestedFloor {
+    constructor(numElevators, status, requestFloor) {
+        this.numElevators = numElevators;
+        this.status = status;
+        this.requestFloor = requestFloor;
+    }
+}
 
 class ElevatorController {
-    constructor(numFloor, numElevators) {
-        this.numFloor = numFloor;
+    constructor(floorNumber, numElevators) {
+        this.floorNumber = floorNumber;
         this.numElevators = numElevators;
         this.btnList = [];
         this.elevatorList = [];
-        for (let i = 1; i < numFloor; i++) {
+        for (let i = 1; i < FloorNumber; i++) {
             this.btnList.push(new Button('UP', i, 'off'));
             this.btnList.push(new Button('DOWN', i + 1, 'off'));
         }
         for (let i = 1; i <= numElevators; i++) {
-            this.elevatorList.push(new Elevators(i, numFloor));
+            this.elevatorList.push(new Elevators(i, floorNumber));
         }
         console.log(this.elevatorList)
         console.log(this.btnList)
     }
 
-    findBestElevator(numFloor, direction, elevList) {
+    findBestElevator(floorNumber, direction, elevList) {
         while (true) {
             for (var i = 0; i < elevList.length; i++) {
                 var x = elevList[i];
                 console.log(elevList)
-                if (x.status === "STOPPED" && x.currentFloor === numFloor && x.direction === direction) {
-                    x.floorList.push(numFloor);
+                if (x.status === "STOPPED" && x.currentFloor === floorNumber && x.direction === direction) {
+                    x.floorList.push(floorNumber);
                     return x;
-                } else if (x.status === "IDLE" && x.currentFloor === numFloor) {
-                    x.floorList.push(numFloor);
+                } else if (x.status === "IDLE" && x.currentFloor === floorNumber) {
+                    x.floorList.push(floorNumber);
                     return x;
-                } else if (x.currentFloor < numFloor && (x.status === "MOVING" || "STOPPED") && x.direction === "UP" && direction === x.direction) {
-                    x.floorList.push(numFloor);
+                } else if (x.currentFloor < floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "UP" && direction === x.direction) {
+                    x.floorList.push(floorNumber);
                     return x;
-                } else if (x.currentFloor > numFloor && (x.status === "MOVING" || "STOPPED") && x.direction === "DOWN" && direction === x.direction) {
-                    x.floorList.push(numFloor);
+                } else if (x.currentFloor > floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "DOWN" && direction === x.direction) {
+                    x.floorList.push(floorNumber);
                     return x;
                 } else if (x.status === "IDLE") {
-                    x.floorList.push(numFloor);
+                    x.floorList.push(floorNumber);
                     return x;
                 }
                 else {
@@ -46,8 +114,15 @@ class ElevatorController {
         }
     }
 
-    requestElevBtn(numFloor, direction) {
-        var Elevator = this.findBestElevator(numFloor, direction, this.elevatorList)
+    requestElevator(FloorNumber, Direction) {
+        var Elevator = this.findBestElevator(FloorNumber, Direction, this.elevatorList)
+        console.log("Elevator choose to respond to the request:")
+        console.log(Elevator);
+        this.operateElevator(Elevator, direction)
+    }
+
+    requestFloor(RequestedFloor, Elevator) {
+        var Elevator = this.requestElevator(RequestedFloor, direction, this.elevatorList)
         console.log("Elevator choose to respond to the request:")
         console.log(Elevator);
         this.operateElevator(Elevator, direction)
@@ -119,80 +194,11 @@ class ElevatorController {
     };
 }
 
-class Button {
-    constructor(direction, floor, status) {
-        this.floor = floor;
-        this.direction = direction;
-        this.status = status;
-    }
-}
-
-class ExternalFloorBtn {
-    constructor(floor, direction, status) {
-        this.floor = floor;
-        this.direction = direction;
-        this.status = status;
-    }
-}
-
-class InternalBtnRequestFloor {
-    constructor(numElevators, status, floor) {
-        this.numElevators = numElevators;
-        this.status = status;
-        this.floor = floor;
-    }
-}
-
-class Columns {
-    constructor(numElevators, numFloor) {
-        this.numElevators = numElevators;
-        this.numFloor = numFloor;
-        this.elevators = [];
-        for (let i = 0; i < this.numElevators; i++) {
-            this.elevators.push(new Elevators(numFloor));
-        }
-    }
-}
-
-class Elevators {
-    constructor(numElevators, numFloor) {
-        this.numElevators = numElevators;
-        this.currentFloor = 1;
-        this.direction = null;
-        this.status = "idle";
-        this.floorList = [];
-        this.internalBtnList = [];
-        for (let j = 1; j <= numFloor; j++) {
-            this.internalBtnList.push(new InternalBtnRequestFloor(numFloor, "off", j));
-        }
-    }
-
-    movingDown() {
-        if (this.status == "IDLE" || this.status == "STOPPED") {
-            this.status = "MOVING";
-            this.direction = "DOWN";
-            console.log("elevator start moving", Elevator);
-        }
-        this.timer(2000);
-        this.currentFloor--;
-    }
-
-    movingUp() {
-        if (this.status == "IDLE" || this.status == "STOPPED") {
-            this.status = "MOVING";
-            this.direction = "UP";
-            console.log("elevator start moving", Elevator);
-        }
-        this.timer(2000);
-        this.currentFloor++;
-    }
-}
-
-function main(numFloor, numElevators) {
+function main(floorNumber, numElevators) {
 
     console.log("main");
 
-    let elevatorController = new ElevatorController(numFloor, numElevators);
+    let elevatorController = new ElevatorController(floorNumber, numElevators);
 
     elevatorController.elevList[0].currentFloor = 3;
     elevatorController.elevList[0].direction = null;
@@ -204,9 +210,9 @@ function main(numFloor, numElevators) {
     elevatorController.elevList[1].status = "IDLE";
     elevatorController.elevList[1].floorList = [];
 
-    elevatorController.requestElevBtn(10, "DOWN");
+    elevatorController.requestElevator(10, "DOWN");
     elevatorController.findFloorRequestBtn(1, 3);
-    elevatorController.requestElevBtn(3, "DOWN");
+    elevatorController.requestElevator(3, "DOWN");
     elevatorController.findFloorRequestBtn(1, 2);
 }
 
@@ -222,5 +228,23 @@ elevatorController.elevatorList[1].direction = null;
 elevatorController.elevatorList[1].status = "IDLE";
 elevatorController.elevatorList[1].floorList = [];
 
-elevatorController.requestElevBtn(10, "DOWN");
-/////
+elevatorController.requestElevator(10, "DOWN");
+/*
+cénario 1:
+Ascenseur 1 à l'étage 2
+Ascenseur 2 à l'étage 6
+Un utilisateur à l'étage 3 veut monter au 7e étage
+
+Scénario 2:
+Ascenseur 1 à l'Étage 10
+Ascenseur 2 à l'étage 3
+Un premier utilisateur au premier étage veut monter au 6e étage,
+pendant qu'un 2e à l'étage 3 veut monter au 5. Tout de suite après,
+une autre personne à l'étage 9 veut descendre à l'étage 2.
+
+Scénario 3:
+Ascenseur 1 à l'étage 10
+Ascenseur 2 à l'étage 3
+Un utilisateur à l'étage 10 veut descendre au 3e étage pendant
+qu'un autre à l'étage 3 veut  descendre au 2e étage
+ */
