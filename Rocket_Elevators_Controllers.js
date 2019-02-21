@@ -8,7 +8,7 @@ class Elevators {
         this.floorList = [];
         this.internalBtnList = [];
         for (let j = 1; j <= floorNumber; j++) {
-            this.internalBtnList.push(new RequestFloor(floorNumber, "off", j));
+            this.internalBtnList.push(new Button(floorNumber));
         }
     }
 
@@ -16,7 +16,6 @@ class Elevators {
         if (this.status == "IDLE" || this.status == "STOPPED") {
             this.status = "MOVING";
             this.direction = "DOWN";
-            console.log("elevator start moving", Elevator);
         }
         this.timer(2000);
         this.currentFloor--;
@@ -26,9 +25,9 @@ class Elevators {
         if (this.status == "IDLE" || this.status == "STOPPED") {
             this.status = "MOVING";
             this.direction = "UP";
-            console.log("elevator start moving", Elevator);
+            //console.log("Elevator start moving", Elevator);
         }
-        this.timer(2000);
+        //this.timer(2000);
         this.currentFloor++;
     }
 }
@@ -45,10 +44,8 @@ class Columns {
 }
 
 class Button {
-    constructor(direction, requestFloor) {
-        this.direction = direction;
+    constructor(requestFloor) {
         this.requestFloor = requestFloor;
-        this.status = status;
     }
 }
 
@@ -74,22 +71,19 @@ class ElevatorController {
         this.numElevators = numElevators;
         this.btnList = [];
         this.elevatorList = [];
-        for (let i = 1; i < FloorNumber; i++) {
+        for (let i = 1; i < floorNumber; i++) {
             this.btnList.push(new Button('UP', i, 'off'));
             this.btnList.push(new Button('DOWN', i + 1, 'off'));
         }
         for (let i = 1; i <= numElevators; i++) {
             this.elevatorList.push(new Elevators(i, floorNumber));
         }
-        console.log(this.elevatorList)
-        console.log(this.btnList)
     }
 
     findBestElevator(floorNumber, direction, elevList) {
         while (true) {
             for (var i = 0; i < elevList.length; i++) {
                 var x = elevList[i];
-                console.log(elevList)
                 if (x.status === "STOPPED" && x.currentFloor === floorNumber && x.direction === direction) {
                     x.floorList.push(floorNumber);
                     return x;
@@ -115,25 +109,21 @@ class ElevatorController {
     }
 
     requestElevator(FloorNumber, Direction) {
-        var Elevator = this.findBestElevator(FloorNumber, Direction, this.elevatorList)
-        console.log("Elevator choose to respond to the request:")
-        console.log(Elevator);
-        this.operateElevator(Elevator, direction)
+        var elevator = this.findBestElevator(FloorNumber, Direction, this.elevatorList)
+        this.operateElevator(elevator, Direction)
     }
 
     requestFloor(Elevator, RequestedFloor) {
-        var Elevator = this.requestElevator(RequestedFloor, direction, this.elevatorList)
-        console.log("Floor choose to respond to the request:")
-        console.log(Elevator);
-        this.operateElevator(Elevator, direction)
+        var elevator = this.requestElevator(RequestedFloor, direction, this.elevatorList)
+        this.operateElevator(Elevator, Direction)
     }
 
-    operateElevator(Elevator, direction) {
+    operateElevator(Elevator, Direction) {
         console.log("next item on floor list : ", Elevator.floorList[0])
         while (Elevator.floorList.length > 0) {
             console.log("current floor : ", Elevator.currentFloor)
             if (Elevator.floorList[0] === Elevator.currentFloor) {
-                Elevator.openDoor(Elevator, direction);
+                //Elevator.openDoor(Elevator, Direction);////////////////////////////////
                 Elevator.floorList.shift()
                 console.log("new list : ", Elevator.floorList);
                 console.log("next destination : ", Elevator.floorList[0])
@@ -148,7 +138,6 @@ class ElevatorController {
         if (Elevator.floorList.length < 1) {
             Elevator.status = "IDLE";
             Elevator.direction = null;
-            console.log(Elevator);
         }
     }
 
@@ -168,7 +157,6 @@ class ElevatorController {
             direction = direction;
         }
         status = "STOPPED";
-        console.log("Elevator stopped :", Elevator);
         //TIMER
         this.timer(2000);
         console.log("DOOR OPENING");
@@ -178,10 +166,24 @@ class ElevatorController {
         this.closeDoor(Elevator);
     }
 
-    closeDoor(Elevator) {
+    closeDoor(status, direction) {
+        if (status === "STOPPED") {
+            direction = direction;
+        }
+        status = "STOPPED";
+        //TIMER
+        this.timer(2000);
+        console.log("DOOR OPENING");
+        this.timer(2000);
+        console.log("DOOR IS OPEN");
+        this.timer(2000);
+        this.closeDoor(Elevator);
+
+
+        /*
         console.log("DOOR IS CLOSING");
         this.timer(2000);
-        console.log("DOOR IS CLOSE");
+        console.log("DOOR IS CLOSE");*/
     }
 
     timer(milliseconds) {
