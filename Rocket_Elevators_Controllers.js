@@ -121,9 +121,9 @@ class ElevatorController {
         this.operateElevator(Elevator, direction)
     }
 
-    requestFloor(RequestedFloor, Elevator) {
+    requestFloor(Elevator, RequestedFloor) {
         var Elevator = this.requestElevator(RequestedFloor, direction, this.elevatorList)
-        console.log("Elevator choose to respond to the request:")
+        console.log("Floor choose to respond to the request:")
         console.log(Elevator);
         this.operateElevator(Elevator, direction)
     }
