@@ -78,27 +78,81 @@ class ElevatorController {
         }
     }
 
+    shortestList(elevlist){
+        var length = 9999
+       
+        for(var i = 0; i < elevlist.length; i++){
+            if( length > elevlist[i].floorList.length){
+                length = elevlist[i].floorList.length
+                var r = elevlist[i]
+            }
+        }
+        return r;
+    }
+    
+    findNearestElev(floorList, direction){ 
+        if (direction === "UP"){
+            var z;
+            do {
+                z = false;
+                for (var i=0; i < floorList.length-1; i++) {
+                    if (floorList[i] > floorList[i+1]) {
+                        var temp = floorList[i];
+                        floorList[i] = floorList[i+1];
+                        floorList[i+1] = temp;
+                        z = true;
+                    }
+                }
+            } while (z);
+        }
+        
+        else if(direction === "DOWN"){
+            do {
+                z = false;
+                for (var i=0; i < floorList.length-1; i++) {
+                    if (floorList[i] < floorList[i+1]) {
+                        var temp = floorList[i];
+                        floorList[i] = floorList[i+1];
+                        floorList[i+1] = temp;
+                        z = true;
+                    }
+                }
+            } while (z);
+        }
+        console.log("Sorted floorList : ", floorList);
+    }
+
     findBestElevator(floorNumber, direction, elevList) {
+        console.log("findBEstElevator");
         while (true) {
             for (var i = 0; i < elevList.length; i++) {
                 var x = elevList[i];
+                console.log("elevator " + x.numElevators);
+                console.log("floorNumber " + floorNumber);
+                console.log("current floor " + x.currentFloor);
                 if (x.status === "STOPPED" && x.currentFloor === floorNumber && x.direction === direction) {
+                    console.log("findBEstElevator1");
                     x.floorList.push(floorNumber);
                     return x;
                 } else if (x.status === "IDLE" && x.currentFloor === floorNumber) {
+                    console.log("findBEstElevator2");
                     x.floorList.push(floorNumber);
                     return x;
                 } else if (x.currentFloor < floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "UP" && direction === x.direction) {
+                    console.log("findBEstElevator3");
                     x.floorList.push(floorNumber);
                     return x;
                 } else if (x.currentFloor > floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "DOWN" && direction === x.direction) {
+                    console.log("findBEstElevator4");
                     x.floorList.push(floorNumber);
                     return x;
                 } else if (x.status === "IDLE") {
+                    console.log("findBEstElevator5");
                     x.floorList.push(floorNumber);
                     return x;
                 }
                 else {
+                    console.log("findBEstElevator6");
                     var x = this.shortestList(elevList);
                     return x;
                 }
@@ -108,6 +162,7 @@ class ElevatorController {
 
     requestElevator(FloorNumber, Direction) {
         var elevator = this.findBestElevator(FloorNumber, Direction, this.elevatorList)
+        console.log("Find best elevator has retrned : " + elevator.numElevators)
         this.operateElevator(elevator, Direction)
     }
 
@@ -210,16 +265,21 @@ function main(floorNumber, numElevators) {
 }*/
 
 console.log("main2");
-let elevatorController = new ElevatorController(10, 2);
+//Elevator 1
+let elevatorController = new ElevatorController(3, 2);
 elevatorController.elevatorList[0].currentFloor = 3;
 elevatorController.elevatorList[0].direction = null;
 elevatorController.elevatorList[0].status = "IDLE";
 elevatorController.elevatorList[0].floorList = [];
+console.log("*****" + elevatorController.elevatorList[0].numElevators)
 
+//Elevator 2
 elevatorController.elevatorList[1].currentFloor = 10;
 elevatorController.elevatorList[1].direction = null;
 elevatorController.elevatorList[1].status = "IDLE";
 elevatorController.elevatorList[1].floorList = [];
+console.log("*****" + elevatorController.elevatorList[1].numElevators)
+
 
 elevatorController.requestElevator(10, "DOWN");
 /*
