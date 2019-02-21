@@ -186,7 +186,7 @@ class ElevatorController {
         }
     };
 }
-
+/*
 function main(floorNumber, numElevators) {
 
     console.log("main");
@@ -207,7 +207,7 @@ function main(floorNumber, numElevators) {
     elevatorController.findFloorRequestBtn(1, 3);
     elevatorController.requestElevator(3, "DOWN");
     elevatorController.findFloorRequestBtn(1, 2);
-}
+}*/
 
 console.log("main2");
 let elevatorController = new ElevatorController(10, 2);
