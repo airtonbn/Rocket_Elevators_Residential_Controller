@@ -25,9 +25,7 @@ class Elevators {
         if (this.status == "IDLE" || this.status == "STOPPED") {
             this.status = "MOVING";
             this.direction = "UP";
-            //console.log("Elevator start moving", Elevator);
         }
-        //this.timer(2000);
         this.currentFloor++;
     }
 }
@@ -123,7 +121,6 @@ class ElevatorController {
         while (Elevator.floorList.length > 0) {
             console.log("current floor : ", Elevator.currentFloor)
             if (Elevator.floorList[0] === Elevator.currentFloor) {
-                //Elevator.openDoor(Elevator, Direction);////////////////////////////////
                 Elevator.floorList.shift()
                 console.log("new list : ", Elevator.floorList);
                 console.log("next destination : ", Elevator.floorList[0])
@@ -178,12 +175,6 @@ class ElevatorController {
         console.log("DOOR IS OPEN");
         this.timer(2000);
         this.closeDoor(Elevator);
-
-
-        /*
-        console.log("DOOR IS CLOSING");
-        this.timer(2000);
-        console.log("DOOR IS CLOSE");*/
     }
 
     timer(milliseconds) {
