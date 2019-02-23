@@ -78,42 +78,30 @@ class ElevatorController {
         }
     }
 
-    shortestList(elevlist){
-        var length = 9999
-       
-        for(var i = 0; i < elevlist.length; i++){
-            if( length > elevlist[i].floorList.length){
-                length = elevlist[i].floorList.length
-                var r = elevlist[i]
-            }
-        }
-        return r;
-    }
-    
-    findNearestElev(floorList, direction){ 
-        if (direction === "UP"){
+    findNearestElev(floorList, direction) {
+        if (direction === "UP") {
             var z;
             do {
                 z = false;
-                for (var i=0; i < floorList.length-1; i++) {
-                    if (floorList[i] > floorList[i+1]) {
+                for (var i = 0; i < floorList.length - 1; i++) {
+                    if (floorList[i] > floorList[i + 1]) {
                         var temp = floorList[i];
-                        floorList[i] = floorList[i+1];
-                        floorList[i+1] = temp;
+                        floorList[i] = floorList[i + 1];
+                        floorList[i + 1] = temp;
                         z = true;
                     }
                 }
             } while (z);
         }
-        
-        else if(direction === "DOWN"){
+
+        else if (direction === "DOWN") {
             do {
                 z = false;
-                for (var i=0; i < floorList.length-1; i++) {
-                    if (floorList[i] < floorList[i+1]) {
+                for (var i = 0; i < floorList.length - 1; i++) {
+                    if (floorList[i] < floorList[i + 1]) {
                         var temp = floorList[i];
-                        floorList[i] = floorList[i+1];
-                        floorList[i+1] = temp;
+                        floorList[i] = floorList[i + 1];
+                        floorList[i + 1] = temp;
                         z = true;
                     }
                 }
@@ -138,14 +126,18 @@ class ElevatorController {
                     console.log("findBEstElevator2");
                     x.floorList.push(floorNumber);
                     return x;
-                } else if (x.currentFloor < floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "UP" && direction === x.direction) {
+                } else if (x.currentFloor < floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "UP" && direction === x.direction ||
+                    findNearestElev.currentFloor < floorNumber && (findNearestElev.status === "MOVING" || "STOPPED") && findNearestElev.direction === "UP" && direction === findNearestElev.direction) {
                     console.log("findBEstElevator3");
                     x.floorList.push(floorNumber);
-                    return x;
-                } else if (x.currentFloor > floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "DOWN" && direction === x.direction) {
+                    findNearestElev.floorList.push(elevList, direction);
+                    return findNearestElev;
+                } else if (x.currentFloor > floorNumber && (x.status === "MOVING" || "STOPPED") && x.direction === "DOWN" && direction === x.direction ||
+                    findNearestElev.currentFloor > floorNumber && (findNearestElev.status === "MOVING" || "STOPPED") && findNearestElev.direction === "UP" && direction === findNearestElev.direction) {
                     console.log("findBEstElevator4");
                     x.floorList.push(floorNumber);
-                    return x;
+                    findNearestElev.floorList.push(elevList, direction);
+                    return findNearestElev;
                 } else if (x.status === "IDLE") {
                     console.log("findBEstElevator5");
                     x.floorList.push(floorNumber);
@@ -162,7 +154,7 @@ class ElevatorController {
 
     requestElevator(FloorNumber, Direction) {
         var elevator = this.findBestElevator(FloorNumber, Direction, this.elevatorList)
-        console.log("Find best elevator has retrned : " + elevator.numElevators)
+        console.log("Find best elevator has returned : " + elevator.numElevators)
         this.operateElevator(elevator, Direction)
     }
 
